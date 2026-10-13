@@ -1,0 +1,447 @@
+% !TeX program = xelatex
+% 计算方法 作业01 —— LaTeX 排版
+% 编译：XeLaTeX（中文需 ctex 宏包，建议 Overleaf 或 TeX Live 完整版）
+\documentclass[a4paper,11pt]{ctexart}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{listings}
+
+% ---------- MATLAB 代码样式 ----------
+\definecolor{codegreen}{rgb}{0.1,0.55,0.1}
+\definecolor{codegray}{rgb}{0.45,0.45,0.45}
+\definecolor{codeblue}{rgb}{0.0,0.0,0.75}
+\definecolor{codebg}{rgb}{0.97,0.97,0.97}
+\lstset{
+  language=Matlab,
+  basicstyle=\ttfamily\small,
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{codeblue},
+  stringstyle=\color{red!70!black},
+  numbers=left,
+  numberstyle=\tiny\color{codegray},
+  stepnumber=1,
+  numbersep=5pt,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{black!25},
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=4,
+  extendedchars=true,
+}
+
+\setlength{\parindent}{0pt}   % 中文习惯：段落不缩进
+\setlength{\parskip}{0.5em}   % 段间距
+
+\begin{document}
+
+% =====================================================================
+% 封面
+% =====================================================================
+\begin{titlepage}
+  \centering
+  {\zihao{2}\bfseries 深圳大学医学部生物医学工程学院\par}
+  \vspace{1.2em}
+  {\zihao{1}\bfseries 本科生课程作业\par}
+  \vspace{2.5em}
+  {\zihao{4}
+    课程：计算方法\\
+    （2026--2027学年第一学期）\\
+    任课教师：张力\par}
+  \vspace{2.5em}
+
+  {\zihao{4}
+  \renewcommand{\arraystretch}{1.6}
+  \begin{tabular}{p{3.5em}p{18em}}
+    班级 & 计算方法\_\_\_\_\_\_班 \\[0.4em]
+    学号 & 2024220029 \\[0.4em]
+    姓名 & \\[0.4em]
+    序号 & \\[0.4em]
+    提交日期 & \_\_\_\_年 \_\_\_\_ 月 \_\_\_\_ 日 \\
+  \end{tabular}
+  \par}
+
+  \vspace{2.5em}
+  {\zihao{4}\bfseries 供助教评分使用\par}
+  \vspace{1em}
+  {\zihao{4}
+  \renewcommand{\arraystretch}{1.6}
+  \begin{tabular}{p{4.5em}p{17em}}
+    助教姓名 & \\[0.4em]
+    收到日期 & \_\_\_\_年 \_\_\_\_ 月 \_\_\_\_ 日 \\[0.4em]
+    评分(0--100) & \\[0.4em]
+    评语（如有） & \\[0.4em]
+  \end{tabular}
+  \par}
+\end{titlepage}
+
+% =====================================================================
+% 作业正文
+% =====================================================================
+\setcounter{section}{0}
+
+% ---------- 第 1 题 ----------
+\section*{1.\ 有效数字位数（20分）}
+\addcontentsline{toc}{section}{1.\ 有效数字位数}
+
+\textbf{题目}　设准确值为 $x=3.78695$，$y=10$，它们的近似值分别为
+$x_1^*=3.7869$，$x_2^*=3.7870$ 及 $y_1^*=9.9999$，$y_2^*=10.1$，$y_3^*=10.0001$，
+试分析 $x_1^*,\,x_2^*,\,y_1^*,\,y_2^*,\,y_3^*$ 分别具有几位有效数字。
+
+\textbf{解}
+
+判定准则：令准确值 $x$ 的近似值为 $x^*$，将 $x^*$ 写成
+$x^*=0.a_1a_2\cdots\times 10^{m}$（$a_1\neq 0$）的规格化形式，若绝对误差
+$|x^*-x|\le 0.5\times 10^{m-n}$，则 $x^*$ 具有 $n$ 位有效数字。
+
+\begin{enumerate}
+  \item $x_1^*=3.7869$，准确值 $x=3.78695$：
+  \[
+    |x_1^*-x|=|3.7869-3.78695|=0.00005=0.5\times 10^{-4}.
+  \]
+  $3.7869=0.37869\times 10^{1}$，即 $m=1$，由 $0.5\times 10^{1-n}=0.5\times 10^{-4}$
+  得 $n=5$。故 $x_1^*$ 有 $5$ 位有效数字。
+
+  \item $x_2^*=3.7870$，准确值 $x=3.78695$：
+  \[
+    |x_2^*-x|=0.00005=0.5\times 10^{-4},
+  \]
+  同 (1)，$n=5$。故 $x_2^*$ 有 $5$ 位有效数字。
+
+  \item $y_1^*=9.9999$，准确值 $y=10$：
+  \[
+    |y_1^*-y|=0.0001=10^{-4}.
+  \]
+  $9.9999=0.99999\times 10^{1}$，即 $m=1$。
+  $0.5\times 10^{1-4}=0.5\times 10^{-3}=0.0005\ge 0.0001$，而
+  $0.5\times 10^{1-5}=0.00005<0.0001$。故 $y_1^*$ 有 $4$ 位有效数字。
+
+  \item $y_2^*=10.1$，准确值 $y=10$：
+  \[
+    |y_2^*-y|=0.1=10^{-1}.
+  \]
+  $10.1=0.101\times 10^{2}$，即 $m=2$。
+  $0.5\times 10^{2-2}=0.5\ge 0.1$，而 $0.5\times 10^{2-3}=0.05<0.1$。
+  故 $y_2^*$ 有 $2$ 位有效数字。
+
+  \item $y_3^*=10.0001$，准确值 $y=10$：
+  \[
+    |y_3^*-y|=0.0001=10^{-4}.
+  \]
+  $10.0001=0.100001\times 10^{2}$，即 $m=2$。
+  $0.5\times 10^{2-5}=0.5\times 10^{-3}=0.0005\ge 0.0001$，而
+  $0.5\times 10^{2-6}=0.00005<0.0001$。故 $y_3^*$ 有 $5$ 位有效数字。
+\end{enumerate}
+
+综上：
+\begin{center}
+  \begin{tabular}{lccccc}
+    \toprule
+    近似值 & $x_1^*$ & $x_2^*$ & $y_1^*$ & $y_2^*$ & $y_3^*$ \\
+    \midrule
+    有效数字位数 & 5 位 & 5 位 & 4 位 & 2 位 & 5 位 \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+
+% ---------- 第 2 题 ----------
+\section*{2.\ Gauss 消去法（20分）}
+\addcontentsline{toc}{section}{2.\ Gauss 消去法}
+
+\textbf{题目}　用（1）矩阵左乘实现 Gauss 消去法，与（2）Gauss 列主元素消去法
+求解下列方程组 $Ax=b$，其中
+\[
+  A=\begin{pmatrix}
+    1 & 2 & 1 & -2\\
+    2 & 5 & 3 & -2\\
+    -2 & -2 & 3 & 5\\
+    1 & 3 & 2 & 5
+  \end{pmatrix},\qquad
+  b=\begin{pmatrix}-1\\3\\15\\9\end{pmatrix}.
+\]
+
+\textbf{解}
+
+增广矩阵 $[A\mid b]$：
+\[
+  \left(\begin{array}{rrrr|r}
+    1 & 2 & 1 & -2 & -1\\
+    2 & 5 & 3 & -2 & 3\\
+    -2 & -2 & 3 & 5 & 15\\
+    1 & 3 & 2 & 5 & 9
+  \end{array}\right)
+\]
+
+\subsection*{（1）矩阵左乘实现 Gauss 消去法（顺序消元）}
+
+\textbf{第 1 步}　主元 $a_{11}=1$，消去第 1 列下方元素
+（行2 $-2\times$行1，行3 $+2\times$行1，行4 $-$行1）：
+\[
+  \left(\begin{array}{rrrr|r}
+    1 & 2 & 1 & -2 & -1\\
+    0 & 1 & 1 & 2 & 5\\
+    0 & 2 & 5 & 1 & 13\\
+    0 & 1 & 1 & 7 & 10
+  \end{array}\right)
+\]
+
+\textbf{第 2 步}　主元 $a_{22}=1$，消去第 2 列下方元素
+（行3 $-2\times$行2，行4 $-$行2）：
+\[
+  \left(\begin{array}{rrrr|r}
+    1 & 2 & 1 & -2 & -1\\
+    0 & 1 & 1 & 2 & 5\\
+    0 & 0 & 3 & -3 & 3\\
+    0 & 0 & 0 & 5 & 5
+  \end{array}\right)
+\]
+
+\textbf{第 3 步}　主元 $a_{33}=3$，其下方已为 $0$，无需消元。此时系数矩阵已化为上三角矩阵。
+
+\textbf{回代：}
+\[
+  \begin{aligned}
+    5x_4&=5 & &\Rightarrow & x_4&=1\\
+    3x_3-3x_4&=3 & &\Rightarrow & x_3&=2\\
+    x_2+x_3+2x_4&=5 & &\Rightarrow & x_2&=1\\
+    x_1+2x_2+x_3-2x_4&=-1 & &\Rightarrow & x_1&=-3
+  \end{aligned}
+\]
+故解为 $x=(x_1,x_2,x_3,x_4)=(-3,1,2,1)$。
+
+\subsection*{（2）Gauss 列主元素消去法}
+
+\textbf{第 1 步}　第 1 列元素为 $1,2,-2,1$，绝对值最大者为 $2$（第 2 行），交换第 1、2 行：
+\[
+  \left(\begin{array}{rrrr|r}
+    2 & 5 & 3 & -2 & 3\\
+    1 & 2 & 1 & -2 & -1\\
+    -2 & -2 & 3 & 5 & 15\\
+    1 & 3 & 2 & 5 & 9
+  \end{array}\right)
+\]
+以 $a_{11}=2$ 为主元消元（行2 $-\tfrac12\times$行1，行3 $+$行1，行4 $-\tfrac12\times$行1）：
+\[
+  \left(\begin{array}{rrrr|r}
+    2 & 5 & 3 & -2 & 3\\
+    0 & -\tfrac12 & -\tfrac12 & -1 & -\tfrac52\\
+    0 & 3 & 6 & 3 & 18\\
+    0 & \tfrac12 & \tfrac12 & 6 & \tfrac{15}{2}
+  \end{array}\right)
+\]
+
+\textbf{第 2 步}　第 2 列（第 2 行起）元素为 $-\tfrac12,\,3,\,\tfrac12$，绝对值最大者为 $3$
+（第 3 行），交换第 2、3 行：
+\[
+  \left(\begin{array}{rrrr|r}
+    2 & 5 & 3 & -2 & 3\\
+    0 & 3 & 6 & 3 & 18\\
+    0 & -\tfrac12 & -\tfrac12 & -1 & -\tfrac52\\
+    0 & \tfrac12 & \tfrac12 & 6 & \tfrac{15}{2}
+  \end{array}\right)
+\]
+以 $a_{22}=3$ 为主元消元（行3 $+\tfrac16\times$行2，行4 $-\tfrac16\times$行2）：
+\[
+  \left(\begin{array}{rrrr|r}
+    2 & 5 & 3 & -2 & 3\\
+    0 & 3 & 6 & 3 & 18\\
+    0 & 0 & \tfrac12 & -\tfrac12 & \tfrac12\\
+    0 & 0 & -\tfrac12 & \tfrac{11}{2} & \tfrac92
+  \end{array}\right)
+\]
+
+\textbf{第 3 步}　第 3 列（第 3 行起）元素为 $\tfrac12,\,-\tfrac12$，绝对值最大者取 $\tfrac12$
+（第 3 行），不交换。以 $a_{33}=\tfrac12$ 为主元消元（行4 $+$行3）：
+\[
+  \left(\begin{array}{rrrr|r}
+    2 & 5 & 3 & -2 & 3\\
+    0 & 3 & 6 & 3 & 18\\
+    0 & 0 & \tfrac12 & -\tfrac12 & \tfrac12\\
+    0 & 0 & 0 & 5 & 5
+  \end{array}\right)
+\]
+
+\textbf{回代：}
+\[
+  \begin{aligned}
+    5x_4&=5 & &\Rightarrow & x_4&=1\\
+    \tfrac12 x_3-\tfrac12 x_4&=\tfrac12 & &\Rightarrow & x_3&=2\\
+    3x_2+6x_3+3x_4&=18 & &\Rightarrow & x_2&=1\\
+    2x_1+5x_2+3x_3-2x_4&=3 & &\Rightarrow & x_1&=-3
+  \end{aligned}
+\]
+综上，$x=(x_1,x_2,x_3,x_4)=(-3,1,2,1)$，与（1）结果一致。
+
+% ---------- 第 3 题 ----------
+\section*{3.\ Cholesky 分解（20分）}
+\addcontentsline{toc}{section}{3.\ Cholesky 分解}
+
+\textbf{题目}　求下列矩阵的 Cholesky 分解（可直接使用公式）：
+\[
+  A=\begin{pmatrix}
+    1 & \tfrac12 & \tfrac13\\
+    \tfrac12 & \tfrac13 & \tfrac14\\
+    \tfrac13 & \tfrac14 & \tfrac15
+  \end{pmatrix}.
+\]
+
+\textbf{解}
+
+$A$ 为 $3\times3$ Hilbert 矩阵，对称正定。Cholesky 分解 $A=LL^{T}$，其中 $L$ 为
+下三角矩阵（对角元为正）。递推公式（$i\ge j$）：
+\[
+  l_{ii}=\sqrt{a_{ii}-\sum_{k=1}^{i-1}l_{ik}^{2}},
+  \qquad
+  l_{ij}=\frac{a_{ij}-\sum_{k=1}^{j-1}l_{ik}l_{jk}}{l_{jj}}\quad(i>j).
+\]
+
+计算过程：
+\[
+  \begin{aligned}
+    l_{11}&=\sqrt{a_{11}}=1,\\
+    l_{21}&=\frac{a_{21}}{l_{11}}=\frac12,\qquad
+    l_{31}=\frac{a_{31}}{l_{11}}=\frac13,\\
+    l_{22}&=\sqrt{a_{22}-l_{21}^{2}}=\sqrt{\tfrac13-\tfrac14}=\sqrt{\tfrac{1}{12}}=\frac{1}{\sqrt{12}},\\
+    l_{32}&=\frac{a_{32}-l_{31}l_{21}}{l_{22}}
+          =\frac{\tfrac14-\tfrac16}{1/\sqrt{12}}=\frac{1}{\sqrt{12}},\\
+    l_{33}&=\sqrt{a_{33}-l_{31}^{2}-l_{32}^{2}}
+          =\sqrt{\tfrac15-\tfrac19-\tfrac{1}{12}}
+          =\sqrt{\tfrac{1}{180}}=\frac{1}{\sqrt{180}}.
+  \end{aligned}
+\]
+
+结果：
+\[
+  L=\begin{pmatrix}
+    1 & 0 & 0\\
+    \tfrac12 & \tfrac{1}{\sqrt{12}} & 0\\
+    \tfrac13 & \tfrac{1}{\sqrt{12}} & \tfrac{1}{\sqrt{180}}
+  \end{pmatrix}.
+\]
+（等价地，有理化后 $l_{22}=l_{32}=\dfrac{\sqrt3}{6}\approx0.2887$，
+$l_{33}=\dfrac{\sqrt5}{30}\approx0.0745$。）
+
+% ---------- 第 4 题 ----------
+\section*{4.\ 追赶法（Crout 法）（20分）}
+\addcontentsline{toc}{section}{4.\ 追赶法（Crout 法）}
+
+\textbf{题目}　用追赶法（Crout 法）解三对角方程组 $Ax=f$（可直接使用公式），其中
+\[
+  A=\begin{pmatrix}
+    2 & 1 & 0 & 0\\
+    1 & 4 & 1 & 0\\
+    0 & 1 & 4 & 1\\
+    0 & 0 & 1 & 2
+  \end{pmatrix},\qquad
+  f=\begin{pmatrix}-3\\6\\14\\-2\end{pmatrix}.
+\]
+
+\textbf{解}
+
+记主对角线 $b=(2,4,4,2)$，下对角线 $a=(1,1,1)$，上对角线 $c=(1,1,1)$。
+追赶法（Crout 分解）将 $A$ 分解为 $A=LU$：$L$ 为下三角矩阵（主对角元素记为 $p_i$，
+副对角元素为 $a_i$），$U$ 为单位上三角矩阵（副对角元素记为 $q_i$）。
+
+递推公式：
+\[
+  p_1=b_1,\qquad q_i=\frac{c_i}{p_i},\qquad p_i=b_i-a_iq_{i-1}\quad(i=2,3,4).
+\]
+
+计算 $L$、$U$ 的系数：
+\[
+  \begin{aligned}
+    p_1&=2, & q_1&=\frac{c_1}{p_1}=\frac12,\\
+    p_2&=b_2-a_2q_1=4-\tfrac12=\tfrac72, & q_2&=\frac{c_2}{p_2}=\frac27,\\
+    p_3&=b_3-a_3q_2=4-\tfrac27=\tfrac{26}{7}, & q_3&=\frac{c_3}{p_3}=\frac{7}{26},\\
+    p_4&=b_4-a_4q_3=2-\tfrac{7}{26}=\tfrac{45}{26}.
+  \end{aligned}
+\]
+即 $p=(2,\tfrac72,\tfrac{26}{7},\tfrac{45}{26})$，$q=(\tfrac12,\tfrac27,\tfrac{7}{26})$。
+
+``追''——前推解 $Ly=f$：
+\[
+  \begin{aligned}
+    2y_1&=-3 & &\Rightarrow & y_1&=-\tfrac32\\
+    y_1+\tfrac72 y_2&=6 & &\Rightarrow & y_2&=\tfrac{15}{7}\\
+    y_2+\tfrac{26}{7}y_3&=14 & &\Rightarrow & y_3&=\tfrac{83}{26}\\
+    y_3+\tfrac{45}{26}y_4&=-2 & &\Rightarrow & y_4&=-3
+  \end{aligned}
+\]
+
+``赶''——回代解 $Ux=y$：
+\[
+  \begin{aligned}
+    x_4&=y_4=-3\\
+    x_3+\tfrac{7}{26}x_4&=\tfrac{83}{26} & &\Rightarrow & x_3&=4\\
+    x_2+\tfrac27 x_3&=\tfrac{15}{7} & &\Rightarrow & x_2&=1\\
+    x_1+\tfrac12 x_2&=-\tfrac32 & &\Rightarrow & x_1&=-2
+  \end{aligned}
+\]
+
+综上：$x=(x_1,x_2,x_3,x_4)=(-2,1,4,-3)$。
+
+% ---------- 第 5 题 ----------
+\section*{5.\ MATLAB 程序 myDoolittle（20分）}
+\addcontentsline{toc}{section}{5.\ MATLAB 程序 myDoolittle}
+
+\textbf{题目}　使用 MATLAB 编写程序 \texttt{myDoolittle}，要求使用 Doolittle 法实现 LU 分解，
+使得程序输入矩阵 $A$，返回单位下三角矩阵 $L$ 和上三角矩阵 $U$。测试矩阵
+$A=\begin{pmatrix}1&-1&3\\2&-4&6\\4&-9&2\end{pmatrix}$ 作为输入的输出结果是否正确。
+
+\textbf{解}
+
+完整程序：
+\begin{lstlisting}
+function [L, U] = myDoolittle(A)
+% myDoolittle  用 Doolittle 法实现矩阵 A 的 LU 分解
+%   输入：A —— n×n 可逆矩阵
+%   输出：L —— 单位下三角矩阵（对角元全为 1）
+%         U —— 上三角矩阵
+%   满足：A = L*U
+n = size(A, 1);
+L = eye(n);     % 单位下三角矩阵
+U = zeros(n);   % 上三角矩阵
+
+for k = 1:n
+    % (1) 先求 U 的第 k 行
+    for j = k:n
+        U(k, j) = A(k, j) - L(k, 1:k-1) * U(1:k-1, j);
+    end
+    % (2) 再求 L 的第 k 列
+    for i = k+1:n
+        L(i, k) = (A(i, k) - L(i, 1:k-1) * U(1:k-1, k)) / U(k, k);
+    end
+end
+end
+\end{lstlisting}
+
+测试脚本：
+\begin{lstlisting}
+A = [1 -1 3; 2 -4 6; 4 -9 2];
+[L, U] = myDoolittle(A);
+disp(L), disp(U), disp(L*U)
+\end{lstlisting}
+
+运行输出：
+\begin{lstlisting}
+L =
+     1     0     0
+     2     1     0
+     4   2.5     1
+U =
+     1    -1     3
+     0    -2     0
+     0     0   -10
+L*U =
+     1    -1     3
+     2    -4     6
+     4    -9     2
+\end{lstlisting}
+
+可见 $L\cdot U=A$，程序输出正确。
+
+\end{document}

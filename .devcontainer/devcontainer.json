@@ -1,0 +1,36 @@
+{
+  "name": "计算方法 LaTeX 环境",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "james-yu.latex-workshop"
+      ],
+      "settings": {
+        // 默认用 latexmk + xelatex 编译，保存即自动编译并预览 PDF
+        "latex-workshop.latex.recipe.default": "latexmk (xelatex)",
+        "latex-workshop.latex.recipes": [
+          {
+            "name": "latexmk (xelatex)",
+            "tools": ["latexmk-xelatex"]
+          }
+        ],
+        "latex-workshop.latex.tools": [
+          {
+            "name": "latexmk-xelatex",
+            "command": "latexmk",
+            "args": [
+              "-xelatex",
+              "-synctex=1",
+              "-interaction=nonstopmode",
+              "-file-line-error",
+              "%DOC%"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

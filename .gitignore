@@ -1,0 +1,20 @@
+# LaTeX 编译产物
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.log
+*.out
+*.synctex.gz
+*.xdv
+*.toc
+*.lof
+*.lot
+
+# PDF（由 GitHub Actions 自动生成，如需提交可删除本行）
+*.pdf
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
