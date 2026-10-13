@@ -9,7 +9,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     texlive-latex-extra \
     texlive-fonts-recommended \
     texlive-lang-chinese \
-    fonts-fandol \
     latexmk \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
