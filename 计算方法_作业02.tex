@@ -24,7 +24,7 @@
 \definecolor{codebg}{rgb}{0.97,0.97,0.97}
 \lstset{
   language=Matlab,
-  basicstyle=\ttfamily\small,
+  basicstyle=\ttfamily\footnotesize,
   commentstyle=\color{codegreen},
   keywordstyle=\color{codeblue},
   stringstyle=\color{red!70!black},
@@ -63,7 +63,7 @@
 
   {\zihao{4}
   \renewcommand{\arraystretch}{1.6}
-  \begin{tabular}{p{3.5em}p{18em}}
+  \begin{tabular}{p{5.5em}p{15.5em}}
     班级 & 计算方法\_\_\_\_\_\_班 \\[0.4em]
     学号 & \\[0.4em]
     姓名 & \\[0.4em]
@@ -77,7 +77,7 @@
   \vspace{1em}
   {\zihao{4}
   \renewcommand{\arraystretch}{1.6}
-  \begin{tabular}{p{4.5em}p{17em}}
+  \begin{tabular}{p{7em}p{14em}}
     助教姓名 & \\[0.4em]
     收到日期 & \_\_\_\_年 \_\_\_\_ 月 \_\_\_\_ 日 \\[0.4em]
     评分(0--100) & \\[0.4em]
@@ -535,6 +535,7 @@ $\sum Q_i y_i=1\times0.8+2\times1.5+3\times1.8+4\times2.0=17.2$。}
 $A=[Q,\;Q^{2}]$ 为 $n\times2$ 的设计矩阵，$a=(a_0,\,a_1)^{\mathrm{T}}$。
 程序以向量 $Q$、$y$ 为输入，返回 $a_0$、$a_1$：
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}
 function [a0, a1] = myLeastSquares(Q, y)
 % myLeastSquares  用最小二乘法拟合经验公式  y = a0*Q + a1*Q^2
@@ -561,6 +562,7 @@ a0 = c(1);
 a1 = c(2);
 end
 \end{lstlisting}
+\end{minipage}
 
 说明：
 
@@ -576,6 +578,7 @@ $A^{\mathrm{T}}Ac=A^{\mathrm{T}}y$ 更稳定（可避免 $A^{\mathrm{T}}A$
 只需在设计矩阵中增加一列全 1 向量（即增加基函数 $Q^{0}$）。
 
 测试脚本 \texttt{test\_leastSquares.m}：
+\begin{minipage}{\linewidth}
 \begin{lstlisting}
 clc; clear;
 Q = [1 2 3 4];
@@ -587,8 +590,10 @@ phi = a0*Q + a1*Q.^2;            % 拟合值
 res = y - phi;                   % 残差
 fprintf('平方误差和 = %.6f\n', sum(res.^2));
 \end{lstlisting}
+\end{minipage}
 
 运行结果（\texttt{format short}）：
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=none,language={}]
 a0 =
     0.9497
@@ -598,6 +603,7 @@ a1 =
 
 平方误差和 = 0.005226
 \end{lstlisting}
+\end{minipage}
 
 程序输出与手算结果 $a_0=0.94968$、$a_1=-0.11290$ 一致
 （$0.9497$、$-0.1129$ 为 4 位小数显示），说明程序正确。
