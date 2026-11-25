@@ -1,0 +1,605 @@
+% !TeX program = xelatex
+% =====================================================================
+% 计算方法 作业02 —— LaTeX 排版
+%   （对应 Word 版《计算方法_作业02_解答.docx》，内容一致）
+%   编译：XeLaTeX（中文需 ctex 宏包）：
+%         latexmk -xelatex -interaction=nonstopmode 计算方法_作业02.tex
+%
+%   5 道题：Lagrange 插值、Newton 均差插值、Newton 差分插值、
+%           Hermite 插值、最小二乘拟合（myLeastSquares）
+% =====================================================================
+\documentclass[a4paper,11pt]{ctexart}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{listings}
+
+% ---------- MATLAB 代码样式（与作业01一致） ----------
+\definecolor{codegreen}{rgb}{0.1,0.55,0.1}
+\definecolor{codegray}{rgb}{0.45,0.45,0.45}
+\definecolor{codeblue}{rgb}{0.0,0.0,0.75}
+\definecolor{codebg}{rgb}{0.97,0.97,0.97}
+\lstset{
+  language=Matlab,
+  basicstyle=\ttfamily\small,
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{codeblue},
+  stringstyle=\color{red!70!black},
+  numbers=left,
+  numberstyle=\tiny\color{codegray},
+  stepnumber=1,
+  numbersep=5pt,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{black!25},
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=4,
+  extendedchars=true,
+}
+
+\setlength{\parindent}{0pt}   % 中文习惯：段落不缩进
+\setlength{\parskip}{0.5em}   % 段间距
+
+\begin{document}
+
+% =====================================================================
+% 封面
+% =====================================================================
+\begin{titlepage}
+  \centering
+  {\zihao{2}\bfseries 深圳大学医学部生物医学工程学院\par}
+  \vspace{1.2em}
+  {\zihao{1}\bfseries 本科生课程作业\par}
+  \vspace{2.5em}
+  {\zihao{4}
+    课程：计算方法\\
+    （2026--2027学年第一学期）\\
+    任课教师：张力\par}
+  \vspace{2.5em}
+
+  {\zihao{4}
+  \renewcommand{\arraystretch}{1.6}
+  \begin{tabular}{p{3.5em}p{18em}}
+    班级 & 计算方法\_\_\_\_\_\_班 \\[0.4em]
+    学号 & \\[0.4em]
+    姓名 & \\[0.4em]
+    序号 & \\[0.4em]
+    提交日期 & \_\_\_\_年 \_\_\_\_ 月 \_\_\_\_ 日 \\
+  \end{tabular}
+  \par}
+
+  \vspace{2.5em}
+  {\zihao{4}\bfseries 供助教评分使用\par}
+  \vspace{1em}
+  {\zihao{4}
+  \renewcommand{\arraystretch}{1.6}
+  \begin{tabular}{p{4.5em}p{17em}}
+    助教姓名 & \\[0.4em]
+    收到日期 & \_\_\_\_年 \_\_\_\_ 月 \_\_\_\_ 日 \\[0.4em]
+    评分(0--100) & \\[0.4em]
+    评语（如有） & \\[0.4em]
+  \end{tabular}
+  \par}
+\end{titlepage}
+
+% =====================================================================
+% 标题
+% =====================================================================
+\begin{center}
+  {\zihao{4}\bfseries 深圳大学\quad 医学部\quad 生物医学工程学院}\\[0.6em]
+  {\zihao{3}\bfseries 计算方法\quad 作业02}
+\end{center}
+\vspace{-0.3em}
+\noindent\rule{\textwidth}{0.8pt}
+\vspace{0.3em}
+
+% =====================================================================
+% 第 1 题
+% =====================================================================
+\section*{1.\ 线性插值与二次 Lagrange 插值（20分）}
+\addcontentsline{toc}{section}{1.\ 线性插值与二次 Lagrange 插值}
+
+\textbf{题目}　已知下列表值：
+\begin{center}
+  \begin{tabular}{ccccc}
+    \toprule
+    $x$      & $10$     & $11$     & $12$     & $13$     \\
+    \midrule
+    $\ln x$  & $2.3026$ & $2.3979$ & $2.4849$ & $2.5649$ \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+用线性插值与二次 Lagrange 插值计算 $\ln 11.75$ 的近似值，并估计误差。
+
+\textbf{解}
+
+\subsection*{（1）线性插值}
+取相邻节点 $x_0=11$、$x_1=12$（使 $x=11.75$ 落在区间内部），由两点插值公式
+\[
+  L_1(x)=\frac{x-x_1}{x_0-x_1}\,y_0+\frac{x-x_0}{x_1-x_0}\,y_1 .
+\]
+两个基函数在 $x=11.75$ 处的值分别为
+\[
+  l_0=\frac{11.75-12}{11-12}=0.25,\qquad
+  l_1=\frac{11.75-11}{12-11}=0.75 .
+\]
+所以
+\[
+  L_1(11.75)=0.25\times 2.3979+0.75\times 2.4849
+  =0.599475+1.863675=2.46315 ,
+\]
+即 $\ln 11.75\approx 2.4632$。
+
+误差估计：$f(x)=\ln x$，$f''(x)=-1/x^{2}$，插值余项为
+\begin{gather*}
+  R_1(x)=\frac{f''(\xi)}{2!}(x-x_0)(x-x_1),\qquad \xi\in(11,\,12),\\
+  |R_1(11.75)|\le \frac{1}{2}\times\frac{1}{11^{2}}\times\bigl|0.75\times(-0.25)\bigr|
+  =\frac{0.1875}{242}=7.75\times 10^{-4}.
+\end{gather*}
+故 $|R_1|\le 0.0008$，即 $\ln 11.75=2.4632\pm 0.0008$。
+
+{\small 校验：精确值 $\ln 11.75=2.463853\cdots$，实际误差 $-7.03\times10^{-4}$，与估计相符。}
+
+\subsection*{（2）二次 Lagrange 插值}
+取 $x_0=11$、$x_1=12$、$x_2=13$，三个基函数化简后为
+\[
+  l_0(x)=\frac{(x-12)(x-13)}{2},\qquad
+  l_1(x)=-(x-11)(x-13),\qquad
+  l_2(x)=\frac{(x-11)(x-12)}{2}.
+\]
+在 $x=11.75$ 处
+\[
+  l_0=0.15625,\qquad l_1=0.9375,\qquad l_2=-0.09375 .
+\]
+{\small 校核：$l_0+l_1+l_2=0.15625+0.9375-0.09375=1$，符合基函数的性质。}
+\begin{gather*}
+  L_2(11.75)=0.15625\times 2.3979+0.9375\times 2.4849-0.09375\times 2.5649,\\
+  L_2(11.75)=0.374672+2.329781-0.240459=2.463806 .
+\end{gather*}
+即 $\ln 11.75\approx 2.4638$。误差：$f'''(x)=2/x^{3}$，
+\[
+  |R_2(11.75)|\le \frac{2}{11^{3}\times 3!}
+  \times\bigl|0.75\times(-0.25)\times(-1.25)\bigr|
+  =2.5045\times10^{-4}\times 0.234375=5.87\times 10^{-5}.
+\]
+即 $|R_2|\le 6\times 10^{-5}$，实际误差为 $-4.70\times 10^{-5}$。
+
+% =====================================================================
+% 第 2 题
+% =====================================================================
+\section*{2.\ Newton 均差插值（20分）}
+\addcontentsline{toc}{section}{2.\ Newton 均差插值}
+
+\textbf{题目}　给定数据表
+\begin{center}
+  \begin{tabular}{ccccccc}
+    \toprule
+    $x$      & $0.125$  & $0.250$  & $0.375$  & $0.500$  & $0.625$  & $0.750$  \\
+    \midrule
+    $f(x)$   & $0.79618$ & $0.77334$ & $0.74371$ & $0.70413$ & $0.65632$ & $0.60228$ \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+构造均差表，用三次 Newton 插值公式计算 $f(0.1581)$ 和 $f(0.6367)$。
+
+\textbf{解}
+
+\subsection*{（1）构造均差表}
+\begin{center}
+  {\small\bfseries 表 1\quad 均差表}\\[0.4em]
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{ccccccc}
+    \toprule
+    $x_i$ & $f(x_i)$ & 一阶均差 & 二阶均差 & 三阶均差 & 四阶均差 & 五阶均差 \\
+    \midrule
+    $0.125$ & $0.79618$ &            &            &            &            &            \\
+    $0.250$ & $0.77334$ & $-0.18272$ &            &            &            &            \\
+    $0.375$ & $0.74371$ & $-0.23704$ & $-0.21728$ &            &            &            \\
+    $0.500$ & $0.70413$ & $-0.31664$ & $-0.31840$ & $-0.269653$ &           &            \\
+    $0.625$ & $0.65632$ & $-0.38248$ & $-0.26336$ & $0.146773$  & $0.832853$ &            \\
+    $0.750$ & $0.60228$ & $-0.43232$ & $-0.19936$ & $0.170667$  & $0.047787$ & $-1.256107$ \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+{\small 表中一阶均差 $f[x_i,x_{i+1}]=\dfrac{f(x_{i+1})-f(x_i)}{x_{i+1}-x_i}$，二阶、三阶均差依次由相邻两个低阶均差作商得到。}
+
+\subsection*{（2）三次 Newton 插值公式}
+\[
+  N_3(x)=f(x_0)+\sum_{k=1}^{3}f[x_0,\ldots,x_k]\,
+  (x-x_0)(x-x_1)\cdots(x-x_{k-1}) .
+\]
+
+\subsection*{（3）计算 $f(0.1581)$}
+因 $0.1581\in[0.125,\,0.250]$，取表中最靠近它的四个节点
+$x_0=0.125$、$x_1=0.250$、$x_2=0.375$、$x_3=0.500$，此时
+\[
+  x-x_0=0.0331,\qquad x-x_1=-0.0919,\qquad x-x_2=-0.2169 .
+\]
+记 $\omega_3(x)=(x-x_0)(x-x_1)(x-x_2)$，则
+\[
+  \omega_3(0.1581)=0.0331\times(-0.0919)\times(-0.2169)=6.60\times 10^{-4}.
+\]
+公式中四项分别为：
+\begin{itemize}\setlength{\itemsep}{0.15em}
+  \item[] 第 1 项：$f(x_0)=0.79618$；
+  \item[] 第 2 项：$f[x_0,x_1](x-x_0)=-0.18272\times0.0331=-0.006048$；
+  \item[] 第 3 项：$f[x_0,x_1,x_2](x-x_0)(x-x_1)
+        =-0.21728\times0.0331\times(-0.0919)=0.000661$；
+  \item[] 第 4 项：$f[x_0,x_1,x_2,x_3]\,\omega_3(0.1581)
+        =-0.269653\times6.60\times10^{-4}=-0.000178$。
+\end{itemize}
+四项相加得
+\[
+  N_3(0.1581)=0.79618-0.006048+0.000661-0.000178=0.790615 ,
+\]
+即 $f(0.1581)\approx 0.79062$。
+
+\subsection*{（4）计算 $f(0.6367)$}
+因 $0.6367\in[0.625,\,0.750]$，取 $x_0=0.375$、$x_1=0.500$、$x_2=0.625$、$x_3=0.750$，此时
+\begin{gather*}
+  x-x_0=0.2617,\qquad x-x_1=0.1367,\qquad x-x_2=0.0117 ,\\
+  \omega_3(0.6367)=0.2617\times0.1367\times0.0117=4.19\times 10^{-4}.
+\end{gather*}
+四项分别为：
+\begin{itemize}\setlength{\itemsep}{0.15em}
+  \item[] 第 1 项：$f(x_0)=0.74371$；
+  \item[] 第 2 项：$f[x_0,x_1](x-x_0)=-0.31664\times0.2617=-0.082865$；
+  \item[] 第 3 项：$f[x_0,x_1,x_2](x-x_0)(x-x_1)
+        =-0.26336\times0.2617\times0.1367=-0.009422$；
+  \item[] 第 4 项：$f[x_0,x_1,x_2,x_3]\,\omega_3(0.6367)
+        =0.170667\times4.19\times10^{-4}=0.000071$。
+\end{itemize}
+四项相加得
+\[
+  N_3(0.6367)=0.74371-0.082865-0.009422+0.000071=0.651495 ,
+\]
+即 $f(0.6367)\approx 0.65150$。
+
+\subsection*{（5）误差估计}
+用高一阶均差可估计余项
+\[
+  R_3(x)\approx f[x_0,\ldots,x_4]\,(x-x_0)(x-x_1)(x-x_2)(x-x_3).
+\]
+对 $x=0.1581$，$f[x_0,\ldots,x_4]=0.832853$，差因子之积为 $-2.256\times10^{-4}$，于是
+\[
+  R_3(0.1581)\approx 0.832853\times(-2.256\times10^{-4})=-1.9\times 10^{-4};
+\]
+对 $x=0.6367$，$f[x_1,\ldots,x_5]=0.047787$，差因子之积为 $1.62\times10^{-4}$，于是
+\[
+  R_3(0.6367)\approx 0.047787\times 1.62\times10^{-4}=7.7\times 10^{-6}.
+\]
+表中数据本身只有 5 位有效数字（舍入误差约 $10^{-5}$），三次插值已满足精度要求，
+故取 $f(0.1581)\approx 0.79062$、$f(0.6367)\approx 0.65150$。
+
+% =====================================================================
+% 第 3 题
+% =====================================================================
+\section*{3.\ Newton 向前、向后差分插值（20分）}
+\addcontentsline{toc}{section}{3.\ Newton 向前、向后差分插值}
+
+\textbf{题目}　用上题数据，构造差分表，计算 $f(0.385)$。
+\begin{enumerate}\setlength{\itemsep}{0.15em}
+  \item 用二次 Newton 向前（差分）插值公式；
+  \item 用二次 Newton 向后（差分）插值公式。
+\end{enumerate}
+二者计算结果是否相同？为什么？
+
+\textbf{解}
+
+\subsection*{（1）构造差分表（步长 $h=0.125$）}
+\begin{center}
+  {\small\bfseries 表 2\quad 向前差分表}\\[0.4em]
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{ccccccc}
+    \toprule
+    $x_i$ & $f_i$ & $\Delta f_i$ & $\Delta^{2}f_i$ & $\Delta^{3}f_i$
+          & $\Delta^{4}f_i$ & $\Delta^{5}f_i$ \\
+    \midrule
+    $0.125$ & $0.79618$ & $-0.02284$ & $-0.00679$ & $-0.00316$ & $0.00488$  & $-0.00460$ \\
+    $0.250$ & $0.77334$ & $-0.02963$ & $-0.00995$ & $0.00172$  & $0.00028$  &            \\
+    $0.375$ & $0.74371$ & $-0.03958$ & $-0.00823$ & $0.00200$  &            &            \\
+    $0.500$ & $0.70413$ & $-0.04781$ & $-0.00623$ &            &            &            \\
+    $0.625$ & $0.65632$ & $-0.05404$ &            &            &            &            \\
+    $0.750$ & $0.60228$ &            &            &            &            &            \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+{\small 向后差分 $\nabla f_i=f_i-f_{i-1}$ 即同列相邻两数之差，且
+$\nabla^{k}f_i=\Delta^{k}f_{i-k}$，故 $\nabla^{k}f$ 各列与上表 $\Delta^{k}f$ 各列数值相同，
+可直接读出。}
+
+\subsection*{（2）二次 Newton 向前插值公式}
+\[
+  N_2(x)=f_0+t\,\Delta f_0+\frac{t(t-1)}{2!}\Delta^{2}f_0,
+  \qquad t=\frac{x-x_0}{h}.
+\]
+$f(0.385)$ 位于第 3、4 个节点（$0.375$ 与 $0.500$）之间，取左端 $x_0=0.250$ 为基点：
+\begin{gather*}
+  f_0=0.77334,\qquad \Delta f_0=-0.02963,\qquad \Delta^{2}f_0=-0.00995,\\
+  t=\frac{0.385-0.250}{0.125}=1.08 ,
+\end{gather*}
+于是
+\begin{gather*}
+  N_2(0.385)=0.77334+1.08\times(-0.02963)
+             +\frac{1.08\times 0.08}{2}\times(-0.00995),\\
+  N_2(0.385)=0.77334-0.032000-0.000430=0.740910 .
+\end{gather*}
+
+\subsection*{（3）二次 Newton 向后插值公式}
+\[
+  N_2(x)=f_n+t\,\nabla f_n+\frac{t(t+1)}{2!}\nabla^{2}f_n,
+  \qquad t=\frac{x-x_n}{h}.
+\]
+取右端 $x_n=0.500$ 为基点：
+\begin{gather*}
+  f_n=0.70413,\qquad \nabla f_n=-0.03958,\qquad \nabla^{2}f_n=-0.00995,\\
+  t=\frac{0.385-0.500}{0.125}=-0.92 ,
+\end{gather*}
+于是
+\begin{gather*}
+  N_2(0.385)=0.70413+(-0.92)\times(-0.03958)
+             +\frac{(-0.92)\times 0.08}{2}\times(-0.00995),\\
+  N_2(0.385)=0.70413+0.036414+0.000366=0.740910 .
+\end{gather*}
+
+\subsection*{（4）两式结果是否相同？为什么？}
+\textbf{相同}，均为 $f(0.385)\approx 0.74091$。
+
+原因是两式所用的节点是同一组 $\{0.250,\;0.375,\;0.500\}$：向前公式以左端
+$x_0=0.250$ 为基点、按 $\Delta^{k}f_0$ 展开，向后公式以右端 $x_n=0.500$ 为基点、
+按 $\nabla^{k}f_n$ 展开。由插值多项式的\textbf{唯一性}，过这三点的次数不超过 2 的
+插值多项式只有一个；前插与后插只是把这个多项式按不同基点、不同基函数
+（$\Delta$ 与 $\nabla$）展开的两种等价形式。由于
+$\Delta^{k}f_i=\nabla^{k}f_{i+k}$，两式中对应项的数值完全相同，故结果必然相等。
+
+{\small 两式的中间量也一一对应：
+$\dfrac{t(t-1)}{2}\Delta^{2}f_0=-0.000430$ 与
+$\dfrac{t(t+1)}{2}\nabla^{2}f_n=0.000366$；
+$1.08\times(-0.02963)=-0.032000$ 与
+$(-0.92)\times(-0.03958)=0.036414$，两项相加均得 $0.740910$。}
+
+\subsection*{（5）进一步说明}
+若把前插基点固定在表首 $x_0=0.125$（此时 $t=2.08$，用 $0.125,0.250,0.375$ 三点）、
+后插基点固定在表尾 $x_n=0.750$（$t=-2.92$，用 $0.500,0.625,0.750$ 三点），
+则两式所用节点不同，得到的是两个不同的二次插值多项式，结果分别为
+$0.741046$ 与 $0.742613$，并不相同；而且 $0.385$ 都落在所用节点的区间之外（外推），
+精度较差。可见“结果是否相同”取决于是否使用同一组节点，与采用前插还是后插无关。
+
+作为校核，若再用四个节点 $0.250,\,0.375,\,0.500,\,0.625$ 作三次插值，得
+$f(0.385)\approx 0.740887$，与二次插值结果只差 $2.3\times10^{-5}$，
+说明 $0.74091$ 是可靠的。
+
+% =====================================================================
+% 第 4 题
+% =====================================================================
+\section*{4.\ Hermite 插值多项式（20分）}
+\addcontentsline{toc}{section}{4.\ Hermite 插值多项式}
+
+\textbf{题目}　求满足下列条件的 Hermite 插值多项式。
+\begin{center}
+  \begin{tabular}{ccc}
+    \toprule
+    $x_k$ & $y_k$ & $y_k'$ \\
+    \midrule
+    $1$ & $2$ & $1$  \\
+    $2$ & $3$ & $-1$ \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+
+\textbf{解}
+
+共给出 4 个条件（2 个函数值、2 个导数值），可确定次数不超过 3 的 Hermite 插值多项式。
+
+\subsection*{（1）化为重节点均差}
+把 $x=1$、$x=2$ 各看作二重节点：$z_0=z_1=1$，$z_2=z_3=2$。
+重节点的一阶均差等于导数值，故
+\[
+  f[z_0,z_1]=f'(1)=1,\qquad f[z_2,z_3]=f'(2)=-1 .
+\]
+
+\subsection*{（2）重节点均差表}
+\begin{center}
+  {\small\bfseries 表 3\quad 重节点均差表}\\[0.4em]
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{ccccc}
+    \toprule
+    $z_i$ & $f(z_i)$ & 一阶均差 & 二阶均差 & 三阶均差 \\
+    \midrule
+    $1$ & $2$ & $1$   & $0$   & $-2$ \\
+    $1$ & $2$ & $1$   & $-2$ &      \\
+    $2$ & $3$ & $-1$ &      &      \\
+    $2$ & $3$ &      &      &      \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+{\small 其中 $f[z_0,z_1,z_2]=\dfrac{1-1}{2-1}=0$，
+$f[z_1,z_2,z_3]=\dfrac{-1-1}{2-1}=-2$，
+$f[z_0,z_1,z_2,z_3]=\dfrac{-2-0}{2-1}=-2$。}
+
+\subsection*{（3）写出插值多项式}
+按 Newton 公式取表中第一条斜线上的均差
+\begin{gather*}
+  H_3(x)=2+1\cdot(x-1)+0\cdot(x-1)^{2}+(-2)(x-1)^{2}(x-2),\\
+  H_3(x)=2+(x-1)-2(x-1)^{2}(x-2).
+\end{gather*}
+把 $(x-1)^{2}(x-2)=x^{3}-4x^{2}+5x-2$ 代入并整理
+\[
+  H_3(x)=2+x-1-2\,(x^{3}-4x^{2}+5x-2)=-2x^{3}+8x^{2}-9x+5 .
+\]
+
+\subsection*{（4）验算}
+\begin{gather*}
+  H_3(1)=-2+8-9+5=2,\qquad H_3'(x)=-6x^{2}+16x-9,\qquad
+  H_3'(1)=-6+16-9=1,\\
+  H_3(2)=-16+32-18+5=3,\qquad H_3'(2)=-24+32-9=-1 .
+\end{gather*}
+4 个条件全部满足；而满足这 4 个条件的次数不超过 3 的多项式是唯一的，故所求
+\[
+  H(x)=-2x^{3}+8x^{2}-9x+5 .
+\]
+{\small 另解（基函数法）：用
+$H_3(x)=\sum_{k=0}^{1}\bigl[y_k\alpha_k(x)+y_k'\beta_k(x)\bigr]$ 展开，
+结果与上式相同。}
+
+% =====================================================================
+% 第 5 题
+% =====================================================================
+\section*{5.\ 最小二乘拟合（20分）}
+\addcontentsline{toc}{section}{5.\ 最小二乘拟合}
+
+\textbf{题目}　在某个低温过程中，函数 $y$ 依赖于温度 $Q$（单位：$^\circ$C）的实验数据如下：
+\begin{center}
+  \begin{tabular}{ccccc}
+    \toprule
+    $Q_i$ & $1$ & $2$ & $3$ & $4$ \\
+    \midrule
+    $y_i$ & $0.8$ & $1.5$ & $1.8$ & $2.0$ \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+且已知经验公式为 $\varphi(Q)=a_0Q+a_1Q^{2}$。
+\begin{enumerate}\setlength{\itemsep}{0.15em}
+  \item 使用最小二乘法求 $a_0$，$a_1$；
+  \item 用 MATLAB 编写程序 \texttt{myLeastSquares}：输入为向量 $Q$、$y$，
+        输出为 $a_0$、$a_1$。
+\end{enumerate}
+
+\textbf{解}
+
+\subsection*{（1）用最小二乘法求 $a_0$、$a_1$}
+取基函数 $\varphi_0(Q)=Q$、$\varphi_1(Q)=Q^{2}$，拟合函数
+$\varphi(Q)=a_0Q+a_1Q^{2}$（曲线过原点，不含常数项）。残差平方和为
+\[
+  S(a_0,a_1)=\sum_{i=1}^{4}\bigl[y_i-a_0Q_i-a_1Q_i^{2}\bigr]^{2}.
+\]
+令 $\partial S/\partial a_0=\partial S/\partial a_1=0$，得法方程组
+（$\sum$ 表示对 $i=1,2,3,4$ 求和）
+\begin{gather*}
+  \sum Q_i^{2}\cdot a_0+\sum Q_i^{3}\cdot a_1=\sum Q_i y_i ,\\
+  \sum Q_i^{3}\cdot a_0+\sum Q_i^{4}\cdot a_1=\sum Q_i^{2}y_i .
+\end{gather*}
+由表中数据算得
+\begin{gather*}
+  \sum Q_i^{2}=30,\qquad \sum Q_i^{3}=100,\qquad \sum Q_i^{4}=354 ,\\
+  \sum Q_i y_i=17.2,\qquad \sum Q_i^{2}y_i=55.0 .
+\end{gather*}
+{\small 例如 $\sum Q_i^{2}=1+4+9+16=30$，
+$\sum Q_i y_i=1\times0.8+2\times1.5+3\times1.8+4\times2.0=17.2$。}
+
+代入法方程，得
+\[
+  30a_0+100a_1=17.2,\qquad 100a_0+354a_1=55.0 .
+\]
+系数行列式 $D=30\times354-100\times100=620\ne 0$，由 Cramer 法则解得
+\begin{gather*}
+  a_0=\frac{17.2\times354-100\times55.0}{620}=\frac{588.8}{620}=0.94968 ,\\
+  a_1=\frac{30\times55.0-100\times17.2}{620}=\frac{-70}{620}=-0.11290 .
+\end{gather*}
+所以经验公式为
+\[
+  \varphi(Q)=0.94968\,Q-0.11290\,Q^{2}.
+\]
+
+拟合效果检验：把四个温度代入拟合式，得下表。
+\begin{center}
+  {\small\bfseries 表 4\quad 拟合值与残差}\\[0.4em]
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{ccccc}
+    \toprule
+    $Q_i$ & $y_i$ & $\varphi(Q_i)$ & $\varepsilon_i=y_i-\varphi(Q_i)$
+          & $\varepsilon_i^{2}$ \\
+    \midrule
+    $1$ & $0.8$ & $0.83677$ & $-0.03677$ & $0.001352$ \\
+    $2$ & $1.5$ & $1.44774$ & $0.05226$  & $0.002731$ \\
+    $3$ & $1.8$ & $1.83290$ & $-0.03290$ & $0.001083$ \\
+    $4$ & $2.0$ & $1.99226$ & $0.00774$  & $0.000060$ \\
+    \midrule
+    合计 & --- & --- & --- & $0.005226$ \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+平方误差和 $\sum\varepsilon_i^{2}=5.23\times10^{-3}$，最大绝对残差 $0.0523$
+（约合 3.5\%）。同时残差满足正交条件
+\[
+  \sum\varepsilon_i Q_i=0,\qquad \sum\varepsilon_i Q_i^{2}=0 .
+\]
+这正是法方程成立的表现（残差与各基函数正交），说明 $a_0$、$a_1$ 计算正确。
+
+\subsection*{（2）MATLAB 程序 myLeastSquares}
+把法方程写成矩阵形式 $A^{\mathrm{T}}A\,a=A^{\mathrm{T}}y$，其中
+$A=[Q,\;Q^{2}]$ 为 $n\times2$ 的设计矩阵，$a=(a_0,\,a_1)^{\mathrm{T}}$。
+程序以向量 $Q$、$y$ 为输入，返回 $a_0$、$a_1$：
+
+\begin{lstlisting}
+function [a0, a1] = myLeastSquares(Q, y)
+% myLeastSquares  用最小二乘法拟合经验公式  y = a0*Q + a1*Q^2
+%
+%   输入：Q  —— 自变量（温度）向量，行向量或列向量均可
+%         y  —— 观测值向量，长度必须与 Q 相同
+%   输出：a0, a1 —— 拟合系数，即 phi(Q) = a0*Q + a1*Q^2
+%
+%   原理：设 A = [Q, Q.^2]，则法方程为 (A'*A)*c = A'*y，
+%         用左除 c = A\y 直接求最小二乘解（数值上比显式解法方程更稳定）。
+%
+%   例：Q = [1 2 3 4];  y = [0.8 1.5 1.8 2.0];
+%       [a0, a1] = myLeastSquares(Q, y)   ->  a0 = 0.9497, a1 = -0.1129
+
+Q = Q(:);  y = y(:);            % 统一为列向量，便于构造设计矩阵
+if numel(Q) ~= numel(y)
+    error('Q 与 y 的长度必须相同');
+end
+
+A = [Q, Q.^2];                  % 设计矩阵：第 1 列 Q，第 2 列 Q^2
+c = A \ y;                      % 左除求最小二乘解（等价于解 A'*A*c = A'*y）
+
+a0 = c(1);
+a1 = c(2);
+end
+\end{lstlisting}
+
+说明：
+
+\hspace{1.2em}（i）设计矩阵 $A$ 的两列分别对应基函数 $Q$ 与 $Q^{2}$，故 $A$ 为
+$n\times2$ 矩阵，$n$ 为数据个数；
+
+\hspace{1.2em}（ii）$Ac=y$ 为超定方程组，程序用左除运算 $A\backslash y$
+求其最小二乘解，在数值上比直接解法方程
+$A^{\mathrm{T}}Ac=A^{\mathrm{T}}y$ 更稳定（可避免 $A^{\mathrm{T}}A$
+使条件数平方放大）；
+
+\hspace{1.2em}（iii）若要拟合含常数项的二次式 $a_0+a_1Q+a_2Q^{2}$，
+只需在设计矩阵中增加一列全 1 向量（即增加基函数 $Q^{0}$）。
+
+测试脚本 \texttt{test\_leastSquares.m}：
+\begin{lstlisting}
+clc; clear;
+Q = [1 2 3 4];
+y = [0.8 1.5 1.8 2.0];
+
+[a0, a1] = myLeastSquares(Q, y)
+
+phi = a0*Q + a1*Q.^2;            % 拟合值
+res = y - phi;                   % 残差
+fprintf('平方误差和 = %.6f\n', sum(res.^2));
+\end{lstlisting}
+
+运行结果（\texttt{format short}）：
+\begin{lstlisting}[numbers=none,language={}]
+a0 =
+    0.9497
+
+a1 =
+   -0.1129
+
+平方误差和 = 0.005226
+\end{lstlisting}
+
+程序输出与手算结果 $a_0=0.94968$、$a_1=-0.11290$ 一致
+（$0.9497$、$-0.1129$ 为 4 位小数显示），说明程序正确。
+
+\end{document}
