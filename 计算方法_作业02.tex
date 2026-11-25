@@ -578,7 +578,8 @@ $A^{\mathrm{T}}Ac=A^{\mathrm{T}}y$ 更稳定（可避免 $A^{\mathrm{T}}A$
 只需在设计矩阵中增加一列全 1 向量（即增加基函数 $Q^{0}$）。
 
 测试脚本 \texttt{test\_leastSquares.m}：
-\begin{minipage}{\linewidth}
+
+\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}
 clc; clear;
 Q = [1 2 3 4];
@@ -593,7 +594,8 @@ fprintf('平方误差和 = %.6f\n', sum(res.^2));
 \end{minipage}
 
 运行结果（\texttt{format short}）：
-\begin{minipage}{\linewidth}
+
+\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=none,language={}]
 a0 =
     0.9497
